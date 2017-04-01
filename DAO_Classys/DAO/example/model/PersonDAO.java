@@ -27,8 +27,27 @@ public class PersonDAO {
 		preparedStatement.close();
 	}
 	
-	public Person getPerson(int id){
-		return null;
+	public Person getPerson(int id) throws SQLException{
+		Connection conn = Database.getInstance().getConnection();
+		
+		String sql = "select id, name, password from people where id=? order by id";
+		PreparedStatement selectStatement  = (PreparedStatement) conn.prepareStatement(sql);
+		
+		selectStatement.setInt(1, id);
+		
+		ResultSet result = selectStatement.executeQuery();
+		Person person = null;
+		
+		if(result.next()){
+			String name = result.getString("name");
+			String password = result.getString("password");
+			
+			person = new Person(id, name, password);
+			
+		}
+		result.close();
+		selectStatement.close();
+		return person;
 	}
 	
 	public List<Person> getPeople() throws SQLException{
@@ -36,7 +55,7 @@ public class PersonDAO {
 		
 		Connection conn = Database.getInstance().getConnection();
 		
-		String sql = "select id, name, password for people order by id";
+		String sql = "select id, name, password from people order by id";
 		Statement selectStatement = conn.createStatement();
 		
 		ResultSet result = selectStatement.executeQuery(sql);
@@ -55,11 +74,44 @@ public class PersonDAO {
 		return people;
 	}
 	
-	public void updatePerson(Person person){
+	public int updatePerson(Person person) throws SQLException{
 		
+		Connection conn = Database.getInstance().getConnection();
+		
+		PreparedStatement p = (PreparedStatement) conn.prepareStatement("update people set name=?, password=? where id=?");
+		p.setString(1, person.getName());
+		p.setString(2, person.getPassword());
+		p.setInt(3, person.getId());
+		
+		int updated = p.executeUpdate();
+		
+		p.close();
+		
+		return updated;
 	}
 	
-	public void deletePerson(int id ){
+	public int deletePerson(int id ) throws SQLException{
+		Connection conn = Database.getInstance().getConnection();
+		
+		PreparedStatement p = (PreparedStatement) conn.prepareStatement("delete form people where id=?");
+		p.setInt(1, id);
+		
+		int deleted = p.executeUpdate();
+		p.close();
+		
+		return deleted;
+		
+		
+	}
+
+	public int deleteAll() throws SQLException {
+		Connection conn = Database.getInstance().getConnection();
+		
+		PreparedStatement p = (PreparedStatement) conn.prepareStatement("delete from people");
+		int delete = p.executeUpdate();
+		p.close();
+		
+		return delete;
 		
 	}
 }
