@@ -1,16 +1,11 @@
-package DAO.example.model;
+package memoryVSdatabase.example.model;
 
 public abstract class DAOFactory {
-	
-	public static final int MYSQL = 0;
-	public static final int ORACLE = 1;
-	
-	
+	public static final int MYSQL =0;
+	public static final int ORACLE =1;
 	public abstract PersonDAO getPersonDAO();
-
-	public abstract	LogDAO getLogDAO();
-	
-	public static DAOFactory getDAOFactory(int type){
+	public abstract LogDAO getLogDAO();
+	public static DAOFactory getFactory(int type){
 		switch(type){
 		case MYSQL:
 			return new MySQLDAOFactory();
@@ -20,4 +15,5 @@ public abstract class DAOFactory {
 			return null;
 		}
 	}
+
 }
